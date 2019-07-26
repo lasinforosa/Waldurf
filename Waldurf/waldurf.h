@@ -25,16 +25,19 @@
 #define TRUE    1
 #define FALSE   0
 
+#define MAX_RCD 8
+#define MAX_TA  4
+#define MAX_PX  2
 
-const static int MOVS_TORRE [] = {1,12,-1,-12};     //4
-const static int MOVS_ALFIL [] = {-11,13,11,-13};   //4
-const static int MOVS_CAVALL [] = {-23,-10,14,25,23,10,-14,-25};    //8
-const static int MOVS_PEOB [] = {-24,-12};      //2
-const static int MOVS_PEOB_CAPT [] = {-11,-13}; //2
-const static int MOVS_PEON [] = {24,12};        //2
-const static int MOVS_PEON_CAPT [] = {11,13};   //2
-const static int MOVS_REI [] = {-11,1,13,12,11,-1,-13,-12};         //8
-const static int MOVS_DAMA  [] = {1,12,-1,-12,-11,13,11,-13};       //8
+const static int MOVS_TORRE [] = {1,12,-1,-12};     //4 MAX_TA
+const static int MOVS_ALFIL [] = {-11,13,11,-13};   //4 MAX_TA
+const static int MOVS_CAVALL [] = {-23,-10,14,25,23,10,-14,-25};    //8 MAX_RCD
+const static int MOVS_PEOB [] = {-24,-12};      //2 MAX_PX
+const static int MOVS_PEOB_CAPT [] = {-11,-13}; //2 MAX_PX
+const static int MOVS_PEON [] = {24,12};        //2 MAX_PX
+const static int MOVS_PEON_CAPT [] = {11,13};   //2 MAX_PX
+const static int MOVS_REI [] = {-11,1,13,12,11,-1,-13,-12};         //8 MAX_RCD
+const static int MOVS_DAMA  [] = {1,12,-1,-12,-11,13,11,-13};       //8 MAX_RCD
 const static int MAX_DESPL = 7;
 
 /*
@@ -71,6 +74,8 @@ typedef struct TipusPosicio{
     double hashPos;
     TpValor valorPos;
     TpJugada jugAnterior;
+    int alfa, beta, kill;
+    TpJugada pseudoJUG[255];
 
 } TpPosicio;
 
@@ -80,10 +85,10 @@ typedef struct TipusPosicio{
 */
 
 char nomPeces[] = "KQRBNPkqrbnp";
-TpPosicio posPPAL, posCALC;
+TpPosicio posPPAL; posInicial;
 TpJugada jugada;
 TpJugada Partida[1000];
-TpJugada pseudoJUG[255];
+
 
 int numPseudoJugades;
 
@@ -98,6 +103,7 @@ void updatePos (TpPosicio *pPos, TpJugada *pJug);
 int generaJugada (TpPosicio *pPosicio, TpJugada *pPseudoJugades);
 int generaCapt(TpPosicio *pPosicio, TpJugada *pPseudoJugades);
 int generaNoCapt(TpPosicio *pPosicio, TpJugada *pPseudoJugades);
+TpPosicio posClone (TpPosicio *posPPAL);
 
 
 #endif

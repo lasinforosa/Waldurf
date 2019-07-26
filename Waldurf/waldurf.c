@@ -10,6 +10,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "waldurf.h"
 
 
@@ -30,8 +31,6 @@
 /*
 ** MAIN PROGRAM
 */
-
-
 
 
 int main()
@@ -131,6 +130,7 @@ void posicioInicial(void)
         posPPAL.valorPos.valor=10;            /* valorant tenir la sortida */
         posPPAL.valorPos.segur=100;           /* a ull  */
 
+        posInicial = posClone (&posPPAL);
         numPseudoJugades = generaJugada(&posPPAL, &pseudoJUG);
 
 }
@@ -304,6 +304,20 @@ void updatePos(TpPosicio *pPos, TpJugada *pJug) {
 
 
 /*
+** copia un objecte  TpPosicio
+** en una altra TpPosicio independent
+*/
+TpPosicio posClone (TpPosicio *posPPAL)
+{
+    TpPosicio *posCurro;
+    TpPosicio posicio;
+
+    posCurro = posPPAL;
+
+
+}
+
+/*
 ** fa i ordena per
 ** generaCapt
 ** generaNoCapt
@@ -340,7 +354,7 @@ int generaNoCapt (TpPosicio *pPosicio, TpJugada *pPseudoJugades) {
 			switch (i) {
 
 				case 0:		/* REI */
-					for (int j=0; j<8;  j++) {
+					for (int j=0; j<MAX_RCD;  j++) {
 
 							desti = origen + MOVS_REI[j];
 							if (desti<26 || desti>117 || pPosicio->escaquer[desti]==99 || pPosicio->escaquer[desti]!=0) {
@@ -355,7 +369,7 @@ int generaNoCapt (TpPosicio *pPosicio, TpJugada *pPseudoJugades) {
 						break;
 
 				case 1:		/* DAMA */
-					for (int j=0; j<8;  j++) {
+					for (int j=0; j<MAX_RCD;  j++) {
 						compta = 1;
 						do {
 							desti = origen + compta* MOVS_DAMA[j];
@@ -375,7 +389,7 @@ int generaNoCapt (TpPosicio *pPosicio, TpJugada *pPseudoJugades) {
 
 				case 2:		/* TORRE */
 				case 3:
-					for (int j=0; j<4;  j++) {
+					for (int j=0; j<MAX_TA;  j++) {
 						compta = 1;
 						do {
 							desti = origen + compta* MOVS_TORRE[j];
@@ -395,7 +409,7 @@ int generaNoCapt (TpPosicio *pPosicio, TpJugada *pPseudoJugades) {
 
 				case 4:
 				case 5:
-					for (int j=0; j<4;  j++) {
+					for (int j=0; j<MAX_TA;  j++) {
 						compta = 1;
 						do {
 							desti = origen + compta* MOVS_ALFIL[j];
@@ -415,7 +429,7 @@ int generaNoCapt (TpPosicio *pPosicio, TpJugada *pPseudoJugades) {
 
 				case 6:		/* CAVALL */
 				case 7:
-					for (int j=0; j<8;  j++) {
+					for (int j=0; j<MAX_RCD;  j++) {
 
 						desti = origen + MOVS_CAVALL[j];
 						if (desti<26 || desti>117 || pPosicio->escaquer[desti]==99 || pPosicio->escaquer[desti]!=0) {
@@ -430,7 +444,7 @@ int generaNoCapt (TpPosicio *pPosicio, TpJugada *pPseudoJugades) {
 					break;
 
 				default: /* PEO */
-						for (int j=0; j<2;  j++) {
+						for (int j=0; j<MAX_PX;  j++) {
 
 						desti = origen + MOVS_PEON[j];
 						if (desti<26 || desti>117 || pPosicio->escaquer[desti]==99 || pPosicio->escaquer[desti]!=0) {
