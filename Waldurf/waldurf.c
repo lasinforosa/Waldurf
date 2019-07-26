@@ -45,11 +45,11 @@ int main()
 
 
 /*  FUNCIONS  */
-
+/*  inicia tots els valors */
 void posicioInicial(void)
 {
     int i=0;
-    /* int numPsJug =0; */   /* sense cap us */
+    numPseudoJugades= 0;
 
     posPPAL.pecesBlanques[0]=61;        posPPAL.pecesBlanques[1]=60;    posPPAL.pecesBlanques[2]=57;
     posPPAL.pecesBlanques[3]=64;        posPPAL.pecesBlanques[4]=59;    posPPAL.pecesBlanques[5]=62;
@@ -70,7 +70,7 @@ void posicioInicial(void)
     posPPAL.colorCasselles[4]=NEGRE;    posPPAL.colorCasselles[5]=NEGRE;
     posPPAL.colorCasselles[6]=NEGRE;    posPPAL.colorCasselles[7]=NEGRE;
     posPPAL.colorCasselles[8]=NEGRE;    posPPAL.colorCasselles[9]=NEGRE;
-    posPPAL.colorCasselles[10]=NEGRE;   colorCasselles[11]=NEGRE;
+    posPPAL.colorCasselles[10]=NEGRE;   posPPAL.colorCasselles[11]=NEGRE;
 
     posPPAL.colorCasselles[12]=BUIT;    posPPAL.colorCasselles[13]=BUIT;
     posPPAL.colorCasselles[14]=BUIT;    posPPAL.colorCasselles[15]=BUIT;
@@ -258,7 +258,10 @@ void entradaJugades (void) {
 
     jugada.inici= orig;
     jugada.acaba= desti;
-    jugada.CorOCapt=0;
+    jugada.corona=0;
+    /* reste elements Jugada */
+
+
     /* genera pseudoJugades */
     numPseudoJugades = generaJugada(&posPPAL, &pseudoJUG[0]);
     updatePos(&posPPAL,&jugada);
@@ -306,7 +309,7 @@ void updatePos(TpPosicio *pPos, TpJugada *pJug) {
 ** generaNoCapt
 */
 
-int generaJugada (TpPosicio *pPosicio, TpLlistaMovs *pPseudoJugades) {
+int generaJugada (TpPosicio *pPosicio, TpJugada *pPseudoJugades) {
 
     int captures = 0;
     int normals = 0;
@@ -318,62 +321,138 @@ int generaJugada (TpPosicio *pPosicio, TpLlistaMovs *pPseudoJugades) {
 }
 
 
-int generaNoCapt (TpPosicio *pPosicio, TpLlistaMovs *pPseudoJugades) {
+int generaNoCapt (TpPosicio *pPosicio, TpJugada *pPseudoJugades) {
 
     int normals = 0;
     int i,j;
     int from =0;
     int to =0;
 
-    for (i=0; i<16; i++) {
-        if (pPosicio->quiMou == BLANC) {
-            from = pPosicio->pecesBlanques[i];
-            printf("\n passant per 1 (blanques)...");
-        }
-        else {
-            from = pPosicio->pecesNegres[i];
-            printf("\n passant per 2 (negres)..");
-        }
-        printf("de: %d \n", from);
-        switch (i+1) {
-            case REI:
-            case DAMA:
-            case TORRE:
-            case ALFIL:
-                break;
 
-            case CAVALL:
-                for (j=0; j<mobilitatCavall[from]; j++) {
-                    to= movsCavall[from][j];
-                    if (pPosicio->colorCasselles[to] == BUIT) {
-                        /* pseudo i no captura */
-                        pPseudoJugades[normals].jugadaFeta.inici = from;
-                        pPseudoJugades[normals].jugadaFeta.acaba = to;
-                        pPseudoJugades[normals].jugadaFeta.CorOCapt = 0;
-                        pPseudoJugades[normals].plyN = pPosicio->ply;
-                        /* encara pendent */
-                        pPseudoJugades[normals].valor.valor = 0;
-                        pPseudoJugades[normals].valor.segur = 0;
-                        normals++;
-                        printf("\n vaja... Estic a 3 (al moviment del cavall)");
-                    }
-                }
-                break;
+		int origen;
+		int desti;
+		int compta;
+		int numJugades =0;
 
-            default:    /* peons */
-                break;
-        }
+		for (int i=0; i<16; i++) {
+			origen = pPosicio->pecesNegres[i];
+
+			switch (i) {
+
+				case 0:		/* REI */
+					for (int j=0; j<8;  j++) {
+
+							desti = origen + MOVS_REI[j];
+							if (desti<26 || desti>117 || pPosicio->escaquer[desti]==99 || pPosicio->escaquer[desti]!=0) {
+							} else {
+
+								// anota jugada
+								numJugades++;
+								printf("%3d-%3d\n",origen,desti);
+							}
+
+						}
+						break;
+
+				case 1:		/* DAMA */
+					for (int j=0; j<8;  j++) {
+						compta = 1;
+						do {
+							desti = origen + compta* MOVS_DAMA[j];
+							if (desti<26 || desti>117 || pPosicio->escaquer[desti]==99 || pPosicio->escaquer[desti]!=0) {
+								compta=100;
+							} else {
+
+								// anota jugada
+								numJugades++;
+								printf("%3d-%3d\n",origen,desti);
+							}
+							compta++;
+						} while (compta<=MAX_DESPL);
+
+					}
+					break;
+
+				case 2:		/* TORRE */
+				case 3:
+					for (int j=0; j<4;  j++) {
+						compta = 1;
+						do {
+							desti = origen + compta* MOVS_TORRE[j];
+							if (desti<26 || desti>117 || pPosicio->escaquer[desti]==99 || pPosicio->escaquer[desti]!=0) {
+								compta=100;
+							} else {
+
+								// anota jugada
+								numJugades++;
+								printf("%3d-%3d\n",origen,desti);
+							}
+							compta++;
+						} while (compta<=MAX_DESPL);
+
+					}
+					break;
+
+				case 4:
+				case 5:
+					for (int j=0; j<4;  j++) {
+						compta = 1;
+						do {
+							desti = origen + compta* MOVS_ALFIL[j];
+							if (desti<26 || desti>117 || pPosicio->escaquer[desti]==99 || pPosicio->escaquer[desti]!=0) {
+								compta=100;
+							} else {
+
+								// anota jugada
+								numJugades++;
+								printf("%3d-%3d\n",origen,desti);
+							}
+							compta++;
+						} while (compta<=MAX_DESPL);
+
+					}
+					break;
+
+				case 6:		/* CAVALL */
+				case 7:
+					for (int j=0; j<8;  j++) {
+
+						desti = origen + MOVS_CAVALL[j];
+						if (desti<26 || desti>117 || pPosicio->escaquer[desti]==99 || pPosicio->escaquer[desti]!=0) {
+						} else {
+
+							// anota jugada
+							numJugades++;
+							printf("%3d-%3d\n",origen,desti);
+						}
+
+					}
+					break;
+
+				default: /* PEO */
+						for (int j=0; j<2;  j++) {
+
+						desti = origen + MOVS_PEON[j];
+						if (desti<26 || desti>117 || pPosicio->escaquer[desti]==99 || pPosicio->escaquer[desti]!=0) {
+						} else {
+
+							// anota jugada
+							numJugades++;
+							printf("%3d-%3d\n",origen,desti);
+						}
+
+					}
+					break;
+
+			} // switch
+		} // for
+
+		return numJugades;
+	}
 
 
-    } /* del for */
 
-    printf("\n Normals= %d \n",normals);
-
-    return normals;
-}
-
-
-int generaCapt (TpPosicio *pPosicio, TpLlistaMovs *pPseudoJugades) {
+int generaCapt (TpPosicio *pPosicio, TpJugada *pPseudoJugades) {
 
     int captures = 0;
 

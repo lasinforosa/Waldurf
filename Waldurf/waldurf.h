@@ -24,7 +24,18 @@
 
 #define TRUE    1
 #define FALSE   0
-#define EOF     -1
+
+
+const static int MOVS_TORRE [] = {1,12,-1,-12};     //4
+const static int MOVS_ALFIL [] = {-11,13,11,-13};   //4
+const static int MOVS_CAVALL [] = {-23,-10,14,25,23,10,-14,-25};    //8
+const static int MOVS_PEOB [] = {-24,-12};      //2
+const static int MOVS_PEOB_CAPT [] = {-11,-13}; //2
+const static int MOVS_PEON [] = {24,12};        //2
+const static int MOVS_PEON_CAPT [] = {11,13};   //2
+const static int MOVS_REI [] = {-11,1,13,12,11,-1,-13,-12};         //8
+const static int MOVS_DAMA  [] = {1,12,-1,-12,-11,13,11,-13};       //8
+const static int MAX_DESPL = 7;
 
 /*
 ** ESTRUCTURES DE DADES
@@ -38,53 +49,45 @@ typedef struct TipusValor{
 typedef struct TipusJugada{
     int inici;
     int acaba;
-    int CorOCapt;
+    int corona;
+    int figMou;
+    int figCapt;
+    int plyN;
+    TpValor value;
 } TpJugada;
 
 typedef struct TipusPosicio{
-    int escaquer[64];
+    int escaquer[144];
+    int colorCasselles[64];
+    int board[64];
+    int pecesBlanques[16];
+    int pecesNegres[16];
     int enrocs;
     int alPas;
     int ply;
     int quiMou;
+    int rep3jug;
+    int reg50jug;
     double hashPos;
     TpValor valorPos;
-    int pecesBlanques[16];
-    int pecesNegres[16];
-    int colorCasselles[64];
-} TpPosicio;
+    TpJugada jugAnterior;
 
-typedef struct TipusLlistaJugades{
-    TpJugada jugadaFeta;
-    int plyN;
-    TpValor valor;
-} TpLlistaMovs;
+} TpPosicio;
 
 
 /*
 ** VARS
 */
-int pecesBlanques[16];
-int pecesNegres[16];
+
 char nomPeces[] = "KQRBNPkqrbnp";
-int colorCasselles [64];
-TpPosicio posPPAL;
-TpPosicio posCALC;
+TpPosicio posPPAL, posCALC;
 TpJugada jugada;
-TpLlistaMovs Partida[1000];
-TpLlistaMovs pseudoJUG[255];
+TpJugada Partida[1000];
+TpJugada pseudoJUG[255];
 
 int numPseudoJugades;
 
 int aturarBucle = FALSE;
-
-
-/*
-** de FirstChess
-** matriu de movs posibles de cada figura
-*/
-int movsCavall[8] = {  };
-
 
 
 /*  funcions */
@@ -92,9 +95,9 @@ void imprimeixEscaquer(void);
 void posicioInicial(void);
 void entradaJugades(void);
 void updatePos (TpPosicio *pPos, TpJugada *pJug);
-int generaJugada (TpPosicio *pPosicio, TpLlistaMovs *pPseudoJugades);
-int generaCapt(TpPosicio *pPosicio, TpLlistaMovs *pPseudoJugades);
-int generaNoCapt(TpPosicio *pPosicio, TpLlistaMovs *pPseudoJugades);
+int generaJugada (TpPosicio *pPosicio, TpJugada *pPseudoJugades);
+int generaCapt(TpPosicio *pPosicio, TpJugada *pPseudoJugades);
+int generaNoCapt(TpPosicio *pPosicio, TpJugada *pPseudoJugades);
 
 
 #endif
